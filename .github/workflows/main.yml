@@ -1,4 +1,3 @@
-
 name: Build & Deploy ke Hosting via FTP
 
 on:
@@ -7,7 +6,7 @@ on:
       - main  # Otomatis deploy saat push ke branch main
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -15,28 +14,18 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      # 2. Setup Node.js (sesuaikan versi jika perlu)
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-          cache: 'npm'
-
-      # 3. Install dependencies
-      - name: Install Dependencies
-        run: npm install
-
-      # 4. Build project (hasilnya di folder /dist atau /build)
-      - name: Build Project
-        run: npm run build
-
-      # 5. Deploy ke hosting via FTP
+      # 2. Deploy langsung via FTP (tanpa build karena HTML/CSS/JS biasa)
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          server: ${{ secrets.FTP_SERVER }}      # contoh: ftp.hostdata.id
-          username: ${{ secrets.FTP_USERNAME }}  # username FTP kamu
-          password: ${{ secrets.FTP_PASSWORD }}  # password FTP kamu
-          local-dir: ./dist/                     # folder hasil build (ganti jika berbeda)
-          server-dir: /public_html/              # folder tujuan di server hosting
-          protocol: ftp                          # gunakan 'ftps' jika hosting support TLS
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./
+          server-dir: /public_html/
+          protocol: ftp
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            README.md
