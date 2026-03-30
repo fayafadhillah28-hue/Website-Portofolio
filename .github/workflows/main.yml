@@ -1,31 +1,28 @@
-name: Build & Deploy ke Hosting via FTP
+name: Deploy Portfolio to Hosting
 
 on:
   push:
     branches:
-      - main  # Otomatis deploy saat push ke branch main
+      - main  # Ganti dengan nama branch utama kamu (bisa 'master')
 
 jobs:
   deploy:
+    name: Upload via FTP
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout kode dari repo
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      # 2. Deploy langsung via FTP (tanpa build karena HTML/CSS/JS biasa)
       - name: Deploy via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./
-          server-dir: /public_html/
-          protocol: ftp
+          server: ${{ secrets.FTP_SERVER }}       # Contoh: ftp.namadomain.com
+          username: ${{ secrets.FTP_USERNAME }}   # Username FTP dari cPanel/Hostdata
+          password: ${{ secrets.FTP_PASSWORD }}   # Password FTP dari cPanel/Hostdata
+          server-dir: /                           # FTP root sudah di dalam public_html
           exclude: |
             **/.git*
             **/.git*/**
-            **/node_modules/**
+            .github/**
             README.md
