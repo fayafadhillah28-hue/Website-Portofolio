@@ -3,7 +3,7 @@ name: Deploy Portfolio to Hosting
 on:
   push:
     branches:
-      - main  # Ganti dengan nama branch utama kamu (bisa 'master')
+      - main
 
 jobs:
   deploy:
@@ -17,10 +17,13 @@ jobs:
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ secrets.FTP_SERVER }}       # Contoh: ftp.namadomain.com
-          username: ${{ secrets.FTP_USERNAME }}   # Username FTP dari cPanel/Hostdata
-          password: ${{ secrets.FTP_PASSWORD }}   # Password FTP dari cPanel/Hostdata
-          server-dir: /                           # FTP root sudah di dalam public_html
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps                        # Ganti dari ftp ke ftps
+          port: 21
+          server-dir: /                         # Sudah langsung ke public_html
+          security: loose                       # Penting: agar tidak strict TLS
           exclude: |
             **/.git*
             **/.git*/**
