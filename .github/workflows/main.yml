@@ -1,28 +1,42 @@
 
-name: Deploy Website Portofolio to Hostdata
+name: Build & Deploy ke Hosting via FTP
 
 on:
   push:
     branches:
-      - main  # Otomatis deploy setiap kamu push ke branch main
+      - main  # Otomatis deploy saat push ke branch main
 
 jobs:
-  web-deploy:
-    name: 🎉 Deploy
+  build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
-    - name: 🚚 Get latest code
-      uses: actions/checkout@v3
+      # 1. Checkout kode dari repo
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-    - name: 🚀 Sync files to Hostdata
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-      with:
-        # Data ini diambil dari GitHub Secrets (bukan ditulis langsung di sini)
-        server: ${{ secrets.FTP_SERVER }}
-        username: ${{ secrets.FTP_USERNAME }}
-        password: ${{ secrets.FTP_PASSWORD }}
-        # Folder di hosting kamu, biasanya 'public_html' atau 'httpdocs'
-        server-dir: ./public_html/ 
-        # File yang akan dikirim (semua yang ada di repo)
-        local-dir: ./
+      # 2. Setup Node.js (sesuaikan versi jika perlu)
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
 
+      # 3. Install dependencies
+      - name: Install Dependencies
+        run: npm install
+
+      # 4. Build project (hasilnya di folder /dist atau /build)
+      - name: Build Project
+        run: npm run build
+
+      # 5. Deploy ke hosting via FTP
+      - name: Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}      # contoh: ftp.hostdata.id
+          username: ${{ secrets.FTP_USERNAME }}  # username FTP kamu
+          password: ${{ secrets.FTP_PASSWORD }}  # password FTP kamu
+          local-dir: ./dist/                     # folder hasil build (ganti jika berbeda)
+          server-dir: /public_html/              # folder tujuan di server hosting
+          protocol: ftp                          # gunakan 'ftps' jika hosting support TLS
