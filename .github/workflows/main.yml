@@ -1,4 +1,4 @@
-```
+
 name: Deploy Website Portofolio to Hostdata
 
 on:
@@ -25,4 +25,4 @@ jobs:
         server-dir: ./public_html/ 
         # File yang akan dikirim (semua yang ada di repo)
         local-dir: ./
-```
+
